@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\FileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MainController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [FileController::class, 'index']);
+
+Route::resource('files', FileController::class);
+Route::post('/files/check', [FileController::class, 'check'])->name('files.check');
