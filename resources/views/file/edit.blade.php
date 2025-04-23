@@ -16,7 +16,7 @@
             @csrf
             <div class="mb-3">
                 <label for="exampleFormControlTextarea1" class="form-label">Enter text</label>
-                <textarea class="form-control" id="exampleFormControlTextarea1" rows="20"></textarea>
+                <textarea name="text" class="form-control" id="exampleFormControlTextarea1" rows="20"></textarea>
             </div>
             <input type="text" name="id" id="id" value="{{ $id }}" hidden>
             <button class="btn btn-success">Ckeck</button>

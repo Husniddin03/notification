@@ -19,3 +19,4 @@ Route::get('/', [FileController::class, 'index']);
 
 Route::resource('files', FileController::class);
 Route::post('/files/check', [FileController::class, 'check'])->name('files.check');
+Route::get('/files/result', [FileController::class, 'result'])->name('files.result');

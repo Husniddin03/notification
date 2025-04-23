@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\FileUploaded;
 use App\Models\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -47,6 +48,9 @@ class FileController extends Controller
             'path' => $filePath,
         ]);
 
+        // 4. Eventni chaqirish
+        event(new FileUploaded($fileName));
+
         // 4. Orqaga redirect qilish
         return redirect()->route('files.index')->with('success', 'File uploaded successfully!');
     }
@@ -55,29 +59,50 @@ class FileController extends Controller
     {
         $file = File::findOrFail($request->id);
         $text = $request->text;
-        $filePath = storage_path('app/public/' . $file->path);
-        preg_match_all('/(\d+)\.\s(.+?)(?=(\d+\.\s)|\z)/s', $text, $matches, PREG_SET_ORDER);
+        $data = file_get_contents(storage_path('app/public/' . $file->path));
+        $trash = explode("++++", $data);
+        $variants = array_map('trim', $trash);
+        $result = [];
 
-        $questions = [];
+        foreach ($variants as $variant) {
+            $parts = explode("====", $variant);
+            $parts = array_map('trim', $parts);
+            $answer = null;
 
-        foreach ($matches as $match) {
-            $fullText = trim($match[2]);
-            $lines = explode("\n", $fullText);
+            foreach ($parts as $part) {
+                if (strpos($part, '#') !== false) {
+                    $answer = $part;
+                    break;
+                }
+            }
 
-            $question = array_shift($lines); // birinchi qatorda savol bo'ladi
-            $options = array_map('trim', $lines); // qolganlari variantlar
-
-            $questions[] = [
-                'question' => $question,
-                'options' => $options
+            $result[] = [
+                'question' => $parts[0] ?? '',
+                'answer' => $answer
             ];
         }
 
-        // Natijani chiqaramiz
-        echo "<pre>";
-        print_r($questions);
-        echo "</pre>";
+        $trash = [];
+        foreach ($result as $k => $v) {
+            $pos = strpos($text, $v['question']);
+            if ($pos !== false) {
+                $trash[] = [
+                    'id' => $pos,
+                    'answer' => $v['answer'],
+                    'question' => $v['question'],
+                ];
+            }
+        }
+
+        usort($trash, function ($a, $b) {
+            return $a['id'] <=> $b['id'];
+        });
+
+        return view('file.result', [
+            'result' => $trash,
+        ]);
     }
+
 
     /**
      * Display the specified resource.

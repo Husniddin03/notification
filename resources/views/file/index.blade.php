@@ -119,6 +119,13 @@
 
 <body>
 
+    @if (session('success'))
+        <div style="padding: 10px; background-color: #d4edda; color: #155724; border-radius: 5px; margin-bottom: 15px;">
+            {{ session('success') }}
+        </div>
+    @endif
+
+
     <h1>Material Design Responsive Table</h1>
     <p>Table of my other Material Design works (list was updated 08.2015)</p>
 
