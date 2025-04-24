@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\FileUploaded;
+use App\Models\Answer;
 use App\Models\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -98,6 +99,14 @@ class FileController extends Controller
             return $a['id'] <=> $b['id'];
         });
 
+        foreach ($trash as $v) {
+            Answer::created([
+                'id' => $v['id'],
+                'question' => $v['question'],
+                'answer' => $v['answer'],
+            ]);
+        }
+        
         return view('file.result', [
             'result' => $trash,
         ]);
