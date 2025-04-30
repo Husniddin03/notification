@@ -106,7 +106,7 @@ class FileController extends Controller
                 'answer' => $v['answer'],
             ]);
         }
-        
+
         return view('file.result', [
             'result' => $trash,
         ]);

@@ -44,7 +44,7 @@
         @foreach ($result as $key => $value)
             <div class="question-container">
                 @if (!is_null($value['question']))
-                    <label class="question-label">{{ $key. '. ' . $value['question'] }}</label>
+                    <label class="question-label">{{ $key + 1 . '. ' . $value['question'] }}</label>
                     <ul class="answer-list">
                         <li class="answer-item">{{ $value['answer'] }}</li>
                     </ul>
